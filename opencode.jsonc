@@ -20,9 +20,22 @@
   },
 
   "permissions": [
-    // This template allows unrestricted shell access. For projects that need
-    // guardrails, replace this with `ask` plus targeted allow/deny rules.
-    { "action": "shell", "resource": "*", "effect": "allow" },
+    // Ask by default, allow read-only inspection and the standard make targets,
+    // and always block irreversible or privileged operations. The last
+    // matching rule wins, so the denies come last.
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "git status*", "effect": "allow" },
+    { "action": "shell", "resource": "git diff*", "effect": "allow" },
+    { "action": "shell", "resource": "git log*", "effect": "allow" },
+    { "action": "shell", "resource": "git show*", "effect": "allow" },
+    { "action": "shell", "resource": "make test*", "effect": "allow" },
+    { "action": "shell", "resource": "make lint*", "effect": "allow" },
+    { "action": "shell", "resource": "make format*", "effect": "allow" },
+    { "action": "shell", "resource": "make check*", "effect": "allow" },
+    { "action": "shell", "resource": "git push*", "effect": "deny" },
+    { "action": "shell", "resource": "git reset --hard*", "effect": "deny" },
+    { "action": "shell", "resource": "git clean -f*", "effect": "deny" },
+    { "action": "shell", "resource": "sudo *", "effect": "deny" },
 
     // Keep secrets out of model context. Built-in defaults already ask before
     // reading .env files; these rules cover common key material.

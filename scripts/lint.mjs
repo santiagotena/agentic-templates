@@ -6,8 +6,10 @@ import { join } from "node:path"
 const errors = []
 const fail = (message) => errors.push(message)
 
+// The agentignore plugin is optional; its tests need Node to strip TypeScript.
+const hasPlugin = existsSync(".opencode/plugins/agentignore")
 const [major, minor] = process.versions.node.split(".").map(Number)
-if (major < 22 || (major === 22 && minor < 18)) {
+if (hasPlugin && (major < 22 || (major === 22 && minor < 18))) {
   fail(`Node.js 22.18+ is required to run the plugin tests (found ${process.versions.node})`)
 }
 
@@ -88,8 +90,11 @@ for (const dir of existsSync(".opencode/skills") ? readdirSync(".opencode/skills
   else frontmatter(skill, ["name", "description"])
 }
 
-for (const file of [".agentignore", ".opencode/plugins/agentignore/index.ts", ".githooks/pre-commit"]) {
-  if (!existsSync(file)) fail(`${file}: missing`)
+if (!existsSync(".githooks/pre-commit")) fail(".githooks/pre-commit: missing")
+if (hasPlugin) {
+  for (const file of [".agentignore", ".opencode/plugins/agentignore/index.ts"]) {
+    if (!existsSync(file)) fail(`${file}: missing (remove the whole plugin or restore this file)`)
+  }
 }
 
 if (errors.length > 0) {

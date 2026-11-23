@@ -22,7 +22,11 @@ setup: ## Install dependencies and enable git hooks
 # The test and lint targets verify the template's own tooling (the agentignore
 # plugin, OpenCode config, hooks). Add your project's commands alongside them.
 test: ## Run the agentignore plugin tests (Node 22.18+)
-	node --test '.opencode/plugins/**/*.test.ts'
+	@if [ -d .opencode/plugins/agentignore ]; then \
+		node --test '.opencode/plugins/**/*.test.ts'; \
+	else \
+		echo "test: no tests configured yet"; \
+	fi
 
 lint: ## Validate OpenCode config, agents, skills, and hooks
 	node scripts/lint.mjs

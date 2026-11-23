@@ -20,6 +20,7 @@ on-demand documentation.
 
 | Path                              | Purpose                                                       |
 | --------------------------------- | ------------------------------------------------------------- |
+| `LICENSE`                         | MIT license; replace the holder when you adopt the template.  |
 | `AGENTS.md`                       | Persistent instructions for every agent working in this repo. |
 | `opencode.jsonc`                  | OpenCode permissions, formatter, watcher, and MCP config.     |
 | `Makefile`                        | Standard `test` / `lint` / `format` / `check` interface.      |
@@ -39,8 +40,8 @@ on-demand documentation.
 ## Specializing the template
 
 - **Makefile** — keep the template checks (`scripts/lint.mjs`, the plugin
-  tests) and add your stack's commands, or replace them, for example `pytest`, `ruff check .`, `ruff format .`, `go test ./...`, or
-  `pnpm test`. Keep `make check` fast enough for a pre-commit hook. `make lint`
+  tests) and add your stack's commands, or replace them. Examples: `pytest`,
+  `ruff check .`, `ruff format .`, `go test ./...`, `pnpm test`. Keep `make check` fast enough for a pre-commit hook. `make lint`
   should check formatting without rewriting files; `make format` applies it.
 - **CI** — `.github/workflows/ci.yml` runs `make setup` and `make check` on
   every push and pull request. Keep CI and the local check equivalent; add
@@ -52,9 +53,12 @@ on-demand documentation.
 - **Stack overlays** — start from `examples/stacks/go/` or
   `examples/stacks/typescript/` when your stack matches, then delete the
   overlays you do not need.
-- **opencode.jsonc** — shell access is unrestricted in this template. Replace
-  the `shell` rule with `ask` plus targeted `allow`/`deny` rules for projects
-  that need guardrails. Add MCP servers and a default model as needed.
+- **opencode.jsonc** — shell commands ask for approval by default. Read-only
+  git commands and the `make` targets are allowed; `git push`, `git reset
+  --hard`, `git clean -f`, and `sudo` are denied. The last matching rule wins,
+  so keep denies at the end. Extend the allowlist for your stack's commands
+  (for example `go test*` or `pnpm *`), and add MCP servers and a default model
+  as needed.
 - **Skills** — copy `.opencode/skills/verify-change/` as the pattern for
   task-specific workflows. Skills are discovered automatically from
   `.opencode/skills/`.
@@ -69,7 +73,10 @@ on-demand documentation.
   permission flow and the `agentignore` shell guard.
 - **Ignore rules** — edit `.agentignore` yourself; the agent cannot. The
   `agentignore` plugin in `.opencode/plugins/` enforces it and needs no
-  configuration. Delete the plugin if you prefer `.gitignore` alone.
+  configuration. The plugin is optional and best-effort. To remove it, delete
+  `.opencode/plugins/agentignore/` and `.agentignore`; `make check` and
+  `make lint` adapt automatically, and the Node 22.18+ requirement relaxes to
+  any recent Node for `scripts/lint.mjs`.
 - **Docs** — record design decisions in `docs/adr/` and interface contracts in
   `docs/api/`. Link them from `AGENTS.md` instead of copying their content.
 
