@@ -4,14 +4,19 @@ A minimal, runnable Go project that shows how to specialize the root template.
 
 ## Try it
 
-Requires Go 1.22+ and, for `make lint`, golangci-lint v2.
+Requires Go 1.22+ and, for `make lint`, golangci-lint v2. Verified with Go
+1.27.4 and golangci-lint 2.15.0 (`brew install golangci-lint`).
 
 ```sh
 cd examples/stacks/go
 make test
-make lint   # go vet + golangci-lint
+make lint   # go vet + golangci-lint, including the gofmt check
+make format # apply gofmt
 make check  # lint + test
 ```
+
+`make lint` fails on unformatted code because `.golangci.yml` enables the
+`gofmt` formatter; `make format` fixes it.
 
 ## Lift it into a project
 
@@ -32,7 +37,10 @@ Add these steps after checkout and before the `make setup` step in
 - uses: actions/setup-go@v5
   with:
     go-version-file: go.mod
-- run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+- run: |
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+      | sh -s -- -b "$(go env GOPATH)/bin" v2.15.0
+    echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 ```
 
-Pin the golangci-lint version for reproducible CI.
+Keep the pinned golangci-lint version in step with the one you develop with.
