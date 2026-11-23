@@ -70,7 +70,7 @@ on-demand documentation.
   `/verify` runs the verification skill. Copy either file in
   `.opencode/commands/` for your own shortcuts. Avoid names that shadow
   built-ins such as `/review`, and avoid `!` shell blocks: they run outside the
-  permission flow and the `agentignore` shell guard.
+  permission flow.
 - **Ignore rules** — edit `.agentignore` yourself; the agent cannot. The
   `agentignore` plugin in `.opencode/plugins/` enforces it and needs no
   configuration. The plugin is optional and best-effort. To remove it, delete
@@ -102,16 +102,13 @@ A local plugin in `.opencode/plugins/agentignore/` enforces the file:
 
 - `read`, `edit`, `write`, and `patch` are refused for ignored paths.
 - `glob` and `grep` refuse ignored search roots and drop ignored results.
-- `shell` commands that name an ignored path (`cat .env`, `grep x secrets/*`)
-  are refused. Removing or creating ignored directories (`rm -rf node_modules`)
-  is still allowed.
-- Editing `.agentignore` is blocked, including through shell redirection,
-  `sed -i`, `rm`, `mv`, and similar, so the agent cannot widen its own access.
+- Editing `.agentignore` with `edit`, `write`, or `patch` is blocked, so the
+  agent cannot widen its own access through those tools.
 
 The plugin loads automatically and needs no configuration. It is a context
-guardrail, not a security boundary. The shell check only sees literal paths:
-variables, command substitution, and scripts that read files themselves get
-through. Pair it with `permissions` when you need real isolation.
+guardrail, not a security boundary. It does not inspect `shell` commands, so
+`cat .env` still works if you approve it. The default `ask` rule for shell
+puts you in the loop; use `permissions` for anything stricter.
 
 Run `make test` to execute the plugin's tests.
 

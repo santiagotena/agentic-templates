@@ -3,7 +3,6 @@ import { readFile, stat } from "node:fs/promises"
 import { isAbsolute, join, relative, resolve, sep } from "node:path"
 import { filterContent, inputPaths, inputPatterns, literalPrefix } from "./filter"
 import { compileRules, isIgnoredPath, type Rule } from "./ignore"
-import { checkShell } from "./shell"
 
 const IGNORE_FILE = ".agentignore"
 const GUARDED = new Set(["read", "edit", "write", "patch", "glob", "grep"])
@@ -44,24 +43,6 @@ export default Plugin.define({
     }
 
     await ctx.tool.hook("execute.before", async (event) => {
-      if (event.tool === "shell") {
-        const input = event.input as { command?: unknown; workdir?: unknown }
-        if (typeof input.command !== "string") return
-        const ignored = matcher(await loadRules())
-        const violation = checkShell(input.command, {
-          cwd: typeof input.workdir === "string" ? resolve(root, input.workdir) : root,
-          ignored,
-          isIgnoreFile: (path) => relativePath(path) === IGNORE_FILE,
-          literalPrefix,
-        })
-        if (violation?.kind === "ignore-file") {
-          throw new Error(`${IGNORE_FILE} is maintained by the user; ask before changing it`)
-        }
-        if (violation) {
-          throw new Error(`${IGNORE_FILE}: refusing to run a command that touches ignored path "${violation.path}"`)
-        }
-        return
-      }
       if (!GUARDED.has(event.tool)) return
       const ignored = matcher(await loadRules())
       const paths = inputPaths(event.tool, event.input)
