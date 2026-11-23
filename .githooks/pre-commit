@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+# Fast, deterministic gate. Keep this cheap; run the full suite in CI.
+make check

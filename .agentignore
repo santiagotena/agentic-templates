@@ -1,0 +1,43 @@
+# Keep large, generated, vendored, and sensitive files out of agent context.
+# Syntax follows .gitignore: one pattern per line, # comments, ! negation.
+# The local plugin in .opencode/plugins/agentignore/ enforces this file.
+
+# Version control internals
+.git/
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+.venv/
+__pycache__/
+vendor/
+target/
+
+# Lockfiles
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+go.sum
+Cargo.lock
+poetry.lock
+uv.lock
+
+# Large fixtures and binaries
+*.min.js
+*.map
+*.wasm
+*.pdf
+
+# Logs and caches
+*.log
+.cache/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key

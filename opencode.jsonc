@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Format files after the agent edits them, using any formatter the project
+  // provides. Built-ins activate only when their executable is available.
+  "formatter": true,
+
+  // Keep the file watcher out of generated and dependency directories.
+  // Mirror the noisy entries from .gitignore here.
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+      "**/.venv/**",
+      "**/vendor/**",
+      "**/target/**"
+    ]
+  },
+
+  "permissions": [
+    // This template allows unrestricted shell access. For projects that need
+    // guardrails, replace this with `ask` plus targeted allow/deny rules.
+    { "action": "shell", "resource": "*", "effect": "allow" },
+
+    // Keep secrets out of model context. Built-in defaults already ask before
+    // reading .env files; these rules cover common key material.
+    { "action": "read", "resource": "secrets/*", "effect": "deny" },
+    { "action": "read", "resource": "*.pem", "effect": "ask" },
+    { "action": "read", "resource": "*.key", "effect": "ask" }
+  ]
+
+  // Add project MCP servers here when needed, for example:
+  // "mcp": {
+  //   "servers": {
+  //     "docs": { "type": "remote", "url": "https://example.com/mcp" }
+  //   }
+  // }
+}

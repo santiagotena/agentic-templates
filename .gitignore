@@ -1,0 +1,26 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Dependencies and build output (adjust to your stack)
+node_modules/
+dist/
+build/
+coverage/
+.venv/
+__pycache__/
+vendor/
+target/
+
+# Logs, caches, and OS noise
+*.log
+.cache/
+.DS_Store
+Thumbs.db
+
+# Local tooling state
+.opencode/cache/
